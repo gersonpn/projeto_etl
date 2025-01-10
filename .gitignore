@@ -1,9 +1,3 @@
-.dist/
+dist/
 
-.gitignore
-
-arquivos_csv/
-
-arquivos_csv/*.csv
-
-.logs/*
+logs/
