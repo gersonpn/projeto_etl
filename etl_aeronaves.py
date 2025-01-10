@@ -16,7 +16,6 @@ def baixar_arquivos_csv(ano_inicial, pasta):
       url = f"https://sistemas.anac.gov.br/dadosabertos/Aeronaves/RAB/Historico_RAB/{ano}-{meses}.csv"
       nome_arquivo = os.path.join(pasta, f" {ano}-{meses}.csv")
 
-
       try:
         response = requests.get(url)
         response.raise_for_status()
@@ -27,8 +26,4 @@ def baixar_arquivos_csv(ano_inicial, pasta):
       except requests.exceptions.RequestException as e:
         print(f"Erro ao baixar o arquivo {url}: {e}")
 
-
-
 baixar_arquivos_csv(2017, "raw")
-
-
