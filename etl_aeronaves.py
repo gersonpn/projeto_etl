@@ -3,15 +3,13 @@ import requests
 from datetime import datetime
 
 
-#Função responsável por baixar os arquivos da API
-def csv_arquivos(ano_inicial, pasta):
+def baixar_arquivos_csv(ano_inicial, pasta):
   ano_atual = datetime.now().year
 
-  #Verifica se a pasta existe
+
   os.makedirs(pasta, exist_ok=True)
 
 
-  # Laço de repetição responsável alterar na URL o ano e o mes.
   for ano in range(ano_inicial, ano_atual + 1):
     for mes in range(1, 13):
       meses = f"{mes:02d}"
@@ -20,10 +18,9 @@ def csv_arquivos(ano_inicial, pasta):
 
 
       try:
-        response = requests.get(url) # Baixa o arquivo
-        response.raise_for_status() # reporta se falhar
+        response = requests.get(url)
+        response.raise_for_status()
 
-        #Salva localmente
         with open(nome_arquivo, 'wb') as f:
           f.write(response.content)
         print(f"Arquivo {nome_arquivo} salvo com sucesso!")
@@ -32,4 +29,6 @@ def csv_arquivos(ano_inicial, pasta):
 
 
 
-csv_arquivos(2017, "arquivos_csv")
+baixar_arquivos_csv(2017, "raw")
+
+
