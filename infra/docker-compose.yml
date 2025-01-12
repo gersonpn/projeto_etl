@@ -28,6 +28,7 @@ services:
       - D:/testes/projeto_etl/infra/airflow/dags:/opt/airflow/dags
       - D:/testes/projeto_etl/infra/logs:/opt/airflow/logs
       - D:/testes/projeto_etl/infra/plugins:/opt/airflow/plugins
+      - D:/testes/projeto_etl/data:/opt/airflow/data/raw
     ports:
       - "8080:8080"
     command: >
@@ -49,12 +50,15 @@ services:
       - D:/testes/projeto_etl/infra/airflow/dags:/opt/airflow/dags
       - D:/testes/projeto_etl/infra/logs:/opt/airflow/logs
       - D:/testes/projeto_etl/infra/plugins:/opt/airflow/plugins
-    command: ["scheduler"]
+      - D:/testes/projeto_etl/data:/opt/airflow/data
+    command: >
+      bash -c "airflow db upgrade && \
+               airflow scheduler"
     networks:
       - airflow_network
 
 volumes:
-  postgres_data:  # Definição correta do volume persistente
+  postgres_data:
 
 networks:
   airflow_network:
