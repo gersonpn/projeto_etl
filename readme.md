@@ -1,4 +1,3 @@
-Claro! Abaixo está a versão do seu **README.md** sem o código, mantendo o foco na explicação do projeto e como usá-lo:
 
 ---
 
@@ -25,7 +24,7 @@ A estrutura básica do projeto é organizada da seguinte forma:
 projeto_etl/
 ├── dags/                  # Diretório para DAGs do Apache Airflow
 ├── logs/                  # Logs de execução dos scripts ETL
-├── plugins/               # Plugins personalizados para o Airflow 
+├── plugins/               # Plugins personalizados para o Airflow
 ├── raw/                   # Armazenamento dos dados brutos (arquivos CSV)
 ├── docker-compose.yml     # Arquivo de configuração do Docker Compose
 ├── baixar_arquivos_csv.py # Script para baixar arquivos CSV da ANAC
