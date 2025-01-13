@@ -24,9 +24,12 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
       AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
+      PYTHONPATH: /opt/airflow
     volumes:
-      - ../airflow/dags:/opt/airflow/dags
+      - ../airflow/dags:/opt/airflow/dags  
       - ../data:/opt/data/raw
+      - ../airflow/function:/opt/airflow/function
+      - ../airflow/task:/opt/airflow/task
     ports:
       - "8080:8080"
     command: >
@@ -44,9 +47,12 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      PYTHONPATH: /opt/airflow
     volumes:
       - ../airflow/dags:/opt/airflow/dags
       - ../data:/opt/data/raw
+      - ../airflow/function:/opt/airflow/function
+      - ../airflow/task:/opt/airflow/task
     command: >
       bash -c "airflow db upgrade && \
                airflow scheduler"
