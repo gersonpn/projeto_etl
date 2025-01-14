@@ -1,9 +1,30 @@
+"""
+Este módulo contém a função para baixar arquivos CSV da ANAC.
+
+A função `baixar_arquivos_csv` baixa arquivos CSV de uma URL específica e os salva
+em um diretório local organizado por ano e mês.
+
+"""
 
 import os
 import requests
 from datetime import datetime
 
 def baixar_arquivos_csv(ano_inicial, pasta):
+    """
+    Baixa arquivos CSV da ANAC e os salva em um diretório local.
+
+    Esta função baixa arquivos CSV de uma URL específica da ANAC, organizados por ano e mês,
+    e os salva em um diretório local. Se o diretório não existir, ele será criado.
+
+    Args:
+        ano_inicial (int): O ano inicial para o download dos arquivos CSV.
+        pasta (str): O caminho do diretório onde os arquivos CSV serão salvos.
+
+    Raises:
+        requests.exceptions.RequestException: Se ocorrer um erro ao fazer a requisição HTTP.
+
+    """
     ano_atual = datetime.now().year
     os.makedirs(pasta, exist_ok=True)
 
