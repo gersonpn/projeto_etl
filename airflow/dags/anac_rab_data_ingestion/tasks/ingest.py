@@ -1,26 +1,22 @@
-
 import os
 import requests
-from datetime import datetime
 
-def baixar_arquivos_csv(ano_inicial, pasta):
-    ano_atual = datetime.now().year
+def baixar_arquivos_csv(ano_inicial, mes, pasta):
+    """
+    Baixa arquivos CSV de acordo com o ano e mês especificados.
+    """
     os.makedirs(pasta, exist_ok=True)
+    url = f"https://sistemas.anac.gov.br/dadosabertos/Aeronaves/RAB/Historico_RAB/{ano_inicial}-{mes:02d}.csv"
+    nome_arquivo = os.path.join(pasta, f"{ano_inicial}-{mes:02d}.csv")
 
-    for ano in range(ano_inicial, ano_atual + 1):
-        pasta_ano = os.path.join(pasta, str(ano))
-        os.makedirs(pasta_ano, exist_ok=True)
-
-        for mes in range(1, 13):
-            meses = f"{mes:02d}"
-            url = f"https://sistemas.anac.gov.br/dadosabertos/Aeronaves/RAB/Historico_RAB/{ano}-{meses}.csv"
-            nome_arquivo = os.path.join(pasta_ano, f"{ano}-{meses}.csv")
-
-            try:
-                response = requests.get(url)
-                response.raise_for_status()
-                with open(nome_arquivo, 'wb') as f:
-                    f.write(response.content)
-                print(f"Arquivo {nome_arquivo} salvo com sucesso!")
-            except requests.exceptions.RequestException as e:
-                print(f"Erro ao baixar o arquivo {url}: {e}")
+    try:
+        response = requests.head(url, timeout=10)
+        if response.status_code == 200:
+            response = requests.get(url, timeout=30)
+            response.raise_for_status()
+            with open(nome_arquivo, 'wb') as f:
+                f.write(response.content)
+        else:
+            raise ValueError(f"Arquivo não encontrado: {url}")
+    except Exception as e:
+        raise RuntimeError(f"Erro ao baixar {url}: {str(e)}")
