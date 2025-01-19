@@ -15,14 +15,25 @@ services:
     networks:
       - airflow_network
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - airflow_network
+
   airflow-webserver:
     image: apache/airflow:2.10.0
     container_name: airflow-webserver
     depends_on:
       - postgres
+      - redis
     environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://admin:admin@postgres:5432/admin
       AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
       PYTHONPATH: /opt/airflow
     volumes:
@@ -42,9 +53,12 @@ services:
     container_name: airflow-scheduler
     depends_on:
       - postgres
+      - redis
     environment:
-      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://admin:admin@postgres:5432/admin
       AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
       PYTHONPATH: /opt/airflow
     volumes:
@@ -53,6 +67,43 @@ services:
     command: >
       bash -c "airflow db upgrade && \
                airflow scheduler"
+    networks:
+      - airflow_network
+
+  airflow-worker:
+    image: apache/airflow:2.10.0
+    container_name: airflow-worker
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://admin:admin@postgres:5432/admin
+      AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
+      PYTHONPATH: /opt/airflow
+    volumes:
+      - ../airflow/dags:/opt/airflow/dags
+      - ../data:/opt/data/raw
+    command: airflow celery worker
+    networks:
+      - airflow_network
+
+  airflow-flower:
+    image: apache/airflow:2.10.0
+    container_name: airflow-flower
+    depends_on:
+      - redis
+    environment:
+      AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
+      AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://admin:admin@postgres:5432/admin
+      AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
+    command: airflow celery flower
+    ports:
+      - "5555:5555"
     networks:
       - airflow_network
 

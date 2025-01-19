@@ -17,6 +17,7 @@ with DAG(
     default_args=default_args,
     schedule_interval=None,
     catchup=False,
+    concurrency=2,
 ) as dag:
 
     current_year = datetime.now().year
@@ -53,5 +54,5 @@ with DAG(
                 begin_ingestion >> task >> end_ingestion
         
     # TODO: Criar as tasks de transformação e carga
-    
+
     end_ingestion >> begin_transform >> end_transform >> begin_load >> end_load
