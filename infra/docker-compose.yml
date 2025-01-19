@@ -16,7 +16,7 @@ services:
       - airflow_network
 
   airflow-webserver:
-    image: apache/airflow:2.7.0
+    image: apache/airflow:2.10.0
     container_name: airflow-webserver
     depends_on:
       - postgres
@@ -38,13 +38,14 @@ services:
       - airflow_network
 
   airflow-scheduler:
-    image: apache/airflow:2.7.0
+    image: apache/airflow:2.10.0
     container_name: airflow-scheduler
     depends_on:
       - postgres
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://admin:admin@postgres:5432/admin
+      AIRFLOW__WEBSERVER__SECRET_KEY: admin_secret_key
       PYTHONPATH: /opt/airflow
     volumes:
       - ../airflow/dags:/opt/airflow/dags
